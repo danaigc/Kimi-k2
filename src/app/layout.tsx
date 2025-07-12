@@ -67,8 +67,8 @@ export const metadata: Metadata = {
     title: "Kimi K2 AI - Open-Source ChatGPT Alternative",
     description: "Powerful open-source AI chat platform. Outperforms GPT-4 on coding & math benchmarks.",
     images: ["https://kimik2.ai/og-image.png"],
-    creator: "@kimik2ai",
-    site: "@kimik2ai",
+    creator: "@Kimi_Moonshot",
+    site: "@Kimi_Moonshot",
   },
   verification: {
     google: "your-google-verification-code",
@@ -109,8 +109,8 @@ export default function RootLayout({
           "height": 400
         },
         "sameAs": [
-          "https://github.com/kimik2",
-          "https://twitter.com/kimik2ai",
+          "https://github.com/MoonshotAI/Kimi-K2",
+          "https://x.com/Kimi_Moonshot",
           "https://linkedin.com/company/kimik2"
         ]
       },

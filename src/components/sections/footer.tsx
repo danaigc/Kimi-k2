@@ -48,8 +48,8 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { name: "GitHub", icon: Github, href: "https://github.com/kimik2" },
-  { name: "Twitter", icon: Twitter, href: "https://twitter.com/kimik2ai" },
+  { name: "GitHub", icon: Github, href: "https://github.com/MoonshotAI/Kimi-K2" },
+  { name: "Twitter", icon: Twitter, href: "https://x.com/Kimi_Moonshot" },
   { name: "LinkedIn", icon: Linkedin, href: "https://linkedin.com/company/kimik2" },
   { name: "Email", icon: Mail, href: "mailto:hello@kimik2.ai" }
 ];

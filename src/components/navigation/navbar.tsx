@@ -84,7 +84,7 @@ export function Navbar() {
           <div className="flex items-center gap-4">
             {/* GitHub Star Button */}
             <a
-              href="https://github.com/kimik2"
+              href="https://github.com/MoonshotAI/Kimi-K2"
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm bg-muted hover:bg-muted/80 rounded-full transition-colors"
@@ -150,7 +150,7 @@ export function Navbar() {
               
               <div className="flex flex-col gap-3 pt-4 border-t">
                 <a
-                  href="https://github.com/kimik2"
+                  href="https://github.com/MoonshotAI/Kimi-K2"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
