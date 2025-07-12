@@ -25,6 +25,7 @@ export function ChatInterface() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -33,8 +34,12 @@ export function ChatInterface() {
   };
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    // Only auto-scroll if shouldAutoScroll is true (i.e., after user interaction)
+    if (shouldAutoScroll) {
+      scrollToBottom();
+      setShouldAutoScroll(false);
+    }
+  }, [messages, shouldAutoScroll]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,6 +55,7 @@ export function ChatInterface() {
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
+    setShouldAutoScroll(true);
 
     try {
       const response = await fetch('/api/chat', {
@@ -79,6 +85,7 @@ export function ChatInterface() {
       };
 
       setMessages(prev => [...prev, assistantMessage]);
+      setShouldAutoScroll(true);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to send message';
       toast.error(errorMessage);
