@@ -71,6 +71,7 @@ src/
 ### Landing Page Sections
 - **Hero** - H1 with "kimi k2", value props, CTAs
 - **Features** - 6 key features with performance stats
+- **Live Demo** - Interactive chat interface with real Kimi K2 API
 - **How It Works** - 3-step process with code examples
 - **Testimonials** - Customer quotes and social proof
 - **Pricing** - Starter/Growth/Business tiers for ai-chat
@@ -84,6 +85,7 @@ src/
 - **Responsive** - Mobile-first design with Tailwind CSS
 - **Animations** - Framer Motion scroll animations
 - **Email Capture** - API endpoint with validation
+- **Live Chat** - Real Kimi K2 AI integration via OpenRouter API
 
 ## 🔧 Tech Stack
 
@@ -131,13 +133,32 @@ Content-Type: application/json
 
 ## 📝 Environment Variables
 
+Create a `.env.local` file in the root directory:
+
 ```bash
+# OpenRouter API Configuration (Required for live chat)
+OPENROUTER_API_KEY=sk-or-v1-your-api-key-here
+
+# Site information for OpenRouter rankings
+NEXT_PUBLIC_SITE_URL=https://kimik2.ai
+NEXT_PUBLIC_SITE_NAME=Kimi K2 AI
+
 # Optional: Database connection (if using Prisma)
 # DATABASE_URL="file:./dev.db"
 
 # Optional: Email service (SendGrid, Resend, etc.)
 # EMAIL_API_KEY="your-api-key"
 ```
+
+### Getting OpenRouter API Key
+
+1. Visit [OpenRouter.ai](https://openrouter.ai)
+2. Sign up for an account
+3. Navigate to API Keys section
+4. Create a new API key
+5. Add credits to your account for usage
+
+**Note**: The chat demo will show a "Demo mode" message without a valid API key.
 
 ## 🚦 Development Commands
 

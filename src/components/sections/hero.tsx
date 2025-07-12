@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Github, Star, Zap } from "lucide-react";
+import Link from "next/link";
 
 export function Hero() {
   return (
@@ -80,13 +81,17 @@ export function Hero() {
             transition={{ delay: 0.6, duration: 0.8 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
-            <Button size="lg" className="px-8 py-6 text-lg group">
-              Try Free Now
-              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button variant="outline" size="lg" className="px-8 py-6 text-lg">
-              View Demo
-            </Button>
+            <Link href="/chat">
+              <Button size="lg" className="px-8 py-6 text-lg group">
+                Try Free Now
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+            <a href="#demo">
+              <Button variant="outline" size="lg" className="px-8 py-6 text-lg">
+                View Demo
+              </Button>
+            </a>
           </motion.div>
 
           {/* Trust Indicators */}
