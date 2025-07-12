@@ -19,6 +19,15 @@ export const metadata: Metadata = {
   description: "Powerful open-source AI chat platform. Outperforms GPT-4 on coding & math benchmarks. Enterprise-grade agentic AI at 95% lower cost. Try free today.",
   keywords: "kimi k2, open source AI chat, chatgpt alternative, enterprise AI platform, autonomous AI agent",
   metadataBase: new URL("https://kimik2.ai"),
+  icons: {
+    icon: "/kimik2icon.png",
+    shortcut: "/kimik2icon.png",
+    apple: "/kimik2icon.png",
+    other: {
+      rel: "apple-touch-icon-precomposed",
+      url: "/kimik2icon.png",
+    },
+  },
   alternates: {
     canonical: "https://kimik2.ai",
     languages: {
