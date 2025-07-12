@@ -99,20 +99,20 @@ export function Features() {
         >
           <h3 className="text-2xl font-bold mb-8">Benchmark Performance</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-6 rounded-lg bg-background border">
-              <div className="text-3xl font-bold text-green-500 mb-2">53.7%</div>
-              <div className="text-sm text-muted-foreground">LiveCodeBench</div>
-              <div className="text-xs text-muted-foreground mt-1">vs GPT-4: 44.7%</div>
+            <div className="p-8 rounded-2xl bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/10 border border-green-200/60 dark:border-green-800/30 hover:shadow-lg transition-all duration-300">
+              <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-3">53.7%</div>
+              <div className="text-base font-medium text-green-700 dark:text-green-300 mb-1">LiveCodeBench</div>
+              <div className="text-sm text-green-600/70 dark:text-green-400/70">vs GPT-4: 44.7%</div>
             </div>
-            <div className="p-6 rounded-lg bg-background border">
-              <div className="text-3xl font-bold text-blue-500 mb-2">97.4%</div>
-              <div className="text-sm text-muted-foreground">MATH-500</div>
-              <div className="text-xs text-muted-foreground mt-1">vs GPT-4: 92.4%</div>
+            <div className="p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/10 border border-blue-200/60 dark:border-blue-800/30 hover:shadow-lg transition-all duration-300">
+              <div className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-3">97.4%</div>
+              <div className="text-base font-medium text-blue-700 dark:text-blue-300 mb-1">MATH-500</div>
+              <div className="text-sm text-blue-600/70 dark:text-blue-400/70">vs GPT-4: 92.4%</div>
             </div>
-            <div className="p-6 rounded-lg bg-background border">
-              <div className="text-3xl font-bold text-purple-500 mb-2">65.8%</div>
-              <div className="text-sm text-muted-foreground">SWE-bench Verified</div>
-              <div className="text-xs text-muted-foreground mt-1">Software Engineering</div>
+            <div className="p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/10 border border-purple-200/60 dark:border-purple-800/30 hover:shadow-lg transition-all duration-300">
+              <div className="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-3">65.8%</div>
+              <div className="text-base font-medium text-purple-700 dark:text-purple-300 mb-1">SWE-bench Verified</div>
+              <div className="text-sm text-purple-600/70 dark:text-purple-400/70">Software Engineering</div>
             </div>
           </div>
         </motion.div>
