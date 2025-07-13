@@ -29,9 +29,9 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://kimik2.ai",
+    canonical: "https://kimik2.ai/",
     languages: {
-      "en-US": "https://kimik2.ai",
+      "en-US": "https://kimik2.ai/",
       "zh-CN": "https://kimik2.ai/zh",
     },
   },
