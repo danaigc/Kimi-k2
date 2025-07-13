@@ -49,8 +49,8 @@ export function Hero() {
             transition={{ delay: 0.4, duration: 0.8 }}
             className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed"
           >
-            The open-source AI chat platform that outperforms ChatGPT on coding and math benchmarks. 
-            Deploy autonomous agents at <strong className="text-foreground">95% lower cost</strong> than proprietary alternatives.
+            The open-source Kimi K2 chat platform that outperforms ChatGPT on coding and math benchmarks. 
+            Deploy autonomous Kimi AI agents at <strong className="text-foreground">95% lower cost</strong> than proprietary alternatives.
           </motion.p>
 
           {/* Stats */}

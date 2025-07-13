@@ -71,8 +71,8 @@ export function Footer() {
               Stay Updated with <span className="text-primary">Kimi K2</span>
             </h3>
             <p className="text-muted-foreground mb-8">
-              Get the latest updates on new features, performance improvements, 
-              and AI development insights delivered to your inbox.
+              Get the latest updates on new Kimi K2 features, performance improvements, 
+              and Kimi AI development insights delivered to your inbox.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
               <input
@@ -108,7 +108,7 @@ export function Footer() {
               <p className="text-primary text-sm">Open-Source AI Platform</p>
             </div>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              The most powerful open-source AI chat platform. Deploy autonomous agents 
+              The most powerful open-source Kimi K2 chat platform. Deploy autonomous Kimi AI agents 
               with superior performance at 95% lower cost than proprietary alternatives.
             </p>
             <div className="flex items-center gap-4">

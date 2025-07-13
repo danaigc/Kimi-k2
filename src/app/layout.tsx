@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Kimi K2 AI - Open-Source ChatGPT Alternative | 95% Less Cost",
-  description: "Powerful open-source AI chat platform. Outperforms GPT-4 on coding & math benchmarks. Enterprise-grade agentic AI at 95% lower cost. Try free today.",
-  keywords: "kimi k2, open source AI chat, chatgpt alternative, enterprise AI platform, autonomous AI agent",
+  description: "Powerful open-source Kimi K2 chat platform. Outperforms GPT-4 on coding & math benchmarks. Enterprise-grade Kimi AI at 95% lower cost. Try free today.",
+  keywords: "kimi k2, kimi k2 ai, kimi ai, open source AI chat, chatgpt alternative, enterprise AI platform, autonomous AI agent, kimi k2 chat platform, kimi ai agent",
   metadataBase: new URL("https://kimik2.ai"),
   icons: {
     icon: "/kimik2icon.png",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Kimi K2 AI - Open-Source ChatGPT Alternative",
-    description: "Powerful open-source AI chat platform. Outperforms GPT-4 on coding & math benchmarks.",
+    description: "Powerful open-source Kimi K2 chat platform. Outperforms GPT-4 on coding & math benchmarks with Kimi AI.",
     type: "website",
     url: "https://kimik2.ai",
     siteName: "Kimi K2 AI",
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Kimi K2 AI - Open-Source ChatGPT Alternative",
-    description: "Powerful open-source AI chat platform. Outperforms GPT-4 on coding & math benchmarks.",
+    description: "Powerful open-source Kimi K2 chat platform. Outperforms GPT-4 on coding & math benchmarks with Kimi AI.",
     images: ["https://kimik2.ai/og-image.png"],
     creator: "@Kimi_Moonshot",
     site: "@Kimi_Moonshot",
@@ -91,7 +91,7 @@ export default function RootLayout({
         "@id": "https://kimik2.ai/#website",
         "url": "https://kimik2.ai",
         "name": "Kimi K2 AI",
-        "description": "Open-source AI chat platform that outperforms GPT-4",
+        "description": "Open-source Kimi K2 chat platform that outperforms GPT-4 with Kimi AI",
         "publisher": {
           "@id": "https://kimik2.ai/#organization"
         },
@@ -118,7 +118,7 @@ export default function RootLayout({
         "@type": "SoftwareApplication",
         "@id": "https://kimik2.ai/#software",
         "name": "Kimi K2 AI",
-        "description": "Open-source AI chat platform that outperforms GPT-4 on coding and math benchmarks. Enterprise-grade agentic AI at 95% lower cost.",
+        "description": "Open-source Kimi K2 chat platform that outperforms GPT-4 on coding and math benchmarks. Enterprise-grade Kimi AI at 95% lower cost.",
         "url": "https://kimik2.ai",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Web",
@@ -175,7 +175,7 @@ export default function RootLayout({
         "@id": "https://kimik2.ai/#webpage",
         "url": "https://kimik2.ai",
         "name": "Kimi K2 AI - Open-Source ChatGPT Alternative",
-        "description": "Powerful open-source AI chat platform. Outperforms GPT-4 on coding & math benchmarks. Enterprise-grade agentic AI at 95% lower cost.",
+        "description": "Powerful open-source Kimi K2 chat platform. Outperforms GPT-4 on coding & math benchmarks. Enterprise-grade Kimi AI at 95% lower cost.",
         "isPartOf": {
           "@id": "https://kimik2.ai/#website"
         },

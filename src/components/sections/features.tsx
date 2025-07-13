@@ -8,7 +8,7 @@ const features = [
   {
     icon: Bot,
     title: "True Agentic Intelligence",
-    description: "Built for autonomous task execution. Deploy AI agents that can write code, execute commands, and complete multi-step workflows without human intervention.",
+    description: "Built for autonomous task execution. Deploy Kimi K2 agents that can write code, execute commands, and complete multi-step workflows without human intervention.",
     color: "text-blue-500"
   },
   {
@@ -58,7 +58,7 @@ export function Features() {
             Why Choose <span className="text-primary">Kimi K2</span>?
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            The only open-source AI platform that delivers enterprise performance 
+            The only open-source Kimi AI platform that delivers enterprise performance 
             at startup prices with complete transparency.
           </p>
         </motion.div>

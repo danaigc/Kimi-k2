@@ -44,7 +44,7 @@ export function Demo() {
             Experience <span className="text-primary">Kimi K2</span> Live
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10">
-            Try our interactive demo to see why developers choose Kimi K2 for their AI workflows. 
+            Try our interactive demo to see why developers choose Kimi K2 for their Kimi AI workflows. 
             No signup required - start chatting immediately.
           </p>
           
@@ -90,11 +90,11 @@ export function Demo() {
         >
           <Card className="max-w-3xl mx-auto bg-gradient-to-r from-primary/5 to-transparent border-primary/20">
             <CardHeader className="pb-4">
-              <CardTitle className="text-2xl">Ready to experience Kimi K2?</CardTitle>
+              <CardTitle className="text-2xl">Ready to experience Kimi K2 AI?</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-8">
-                Start chatting with our powerful AI assistant completely free. 
+                Start chatting with our powerful Kimi K2 assistant completely free. 
                 No registration required - experience the full capabilities instantly.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
