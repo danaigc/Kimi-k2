@@ -103,7 +103,7 @@ export function ChatInterface() {
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto h-[700px] flex flex-col bg-background/95 backdrop-blur border-0 shadow-2xl">
+    <Card className="w-full max-w-4xl mx-auto h-[800px] flex flex-col bg-background/95 backdrop-blur border-0 shadow-2xl">
       <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-primary/10 rounded-t-lg py-4">
         <CardTitle className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
