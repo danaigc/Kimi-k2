@@ -39,12 +39,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Make request to OpenRouter
+    // Make request to OpenRouter with streaming
     const completion = await client.chat.completions.create(
       {
         model,
         messages,
-        stream: false, // For simplicity, not using streaming yet
+        stream: true, // Enable streaming
         max_tokens: 1000,
         temperature: 0.7,
       },
@@ -56,20 +56,34 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    const responseMessage = completion.choices[0]?.message;
+    // Create a ReadableStream for streaming response
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of completion) {
+            const content = chunk.choices[0]?.delta?.content;
+            if (content) {
+              const data = JSON.stringify({ content });
+              controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+            }
+          }
+          // Send completion signal
+          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+          controller.close();
+        } catch (error) {
+          console.error('Streaming error:', error);
+          controller.error(error);
+        }
+      },
+    });
 
-    if (!responseMessage) {
-      return NextResponse.json(
-        { error: 'No response from AI model' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: responseMessage,
-      model: completion.model,
-      usage: completion.usage,
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
     });
 
   } catch (error: unknown) {

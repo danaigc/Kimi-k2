@@ -57,6 +57,17 @@ export function ChatInterface() {
     setIsLoading(true);
     setShouldAutoScroll(true);
 
+    // Create assistant message placeholder for streaming
+    const assistantMessageId = (Date.now() + 1).toString();
+    const assistantMessage: Message = {
+      id: assistantMessageId,
+      role: 'assistant',
+      content: '',
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, assistantMessage]);
+
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -71,25 +82,58 @@ export function ChatInterface() {
         }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
+        const data = await response.json();
         throw new Error(data.error || 'Failed to get response');
       }
 
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: data.message.content,
-        timestamp: new Date()
-      };
+      // Handle streaming response
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
 
-      setMessages(prev => [...prev, assistantMessage]);
-      setShouldAutoScroll(true);
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          const lines = chunk.split('\n');
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.slice(6).trim();
+              if (data === '[DONE]') {
+                setIsLoading(false);
+                setShouldAutoScroll(true);
+                return;
+              }
+
+              try {
+                const parsed = JSON.parse(data);
+                if (parsed.content) {
+                  setMessages(prev => 
+                    prev.map(msg => 
+                      msg.id === assistantMessageId 
+                        ? { ...msg, content: msg.content + parsed.content }
+                        : msg
+                    )
+                  );
+                  setShouldAutoScroll(true);
+                }
+              } catch (parseError) {
+                console.warn('Failed to parse streaming data:', parseError);
+              }
+            }
+          }
+        }
+      }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to send message';
       toast.error(errorMessage);
       console.error('Chat error:', error);
+      
+      // Remove the empty assistant message on error
+      setMessages(prev => prev.filter(msg => msg.id !== assistantMessageId));
     } finally {
       setIsLoading(false);
     }
@@ -155,6 +199,9 @@ export function ChatInterface() {
                   >
                     <p className="text-sm leading-relaxed whitespace-pre-wrap">
                       {message.content}
+                      {message.role === 'assistant' && isLoading && message.content && (
+                        <span className="inline-block w-2 h-4 bg-primary/60 ml-1 animate-pulse" />
+                      )}
                     </p>
                     <div className="text-xs opacity-70 mt-2">
                       {message.timestamp.toLocaleTimeString([], { 
