@@ -58,14 +58,25 @@ export async function POST(request: NextRequest) {
 
     // Create a ReadableStream for streaming response
     const encoder = new TextEncoder();
+    
     const stream = new ReadableStream({
       async start(controller) {
         try {
+          // Send initial comment to establish connection
+          controller.enqueue(encoder.encode(': ping\n\n'));
+          
           for await (const chunk of completion) {
             const content = chunk.choices[0]?.delta?.content;
             if (content) {
               const data = JSON.stringify({ content });
-              controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+              // Add timestamp to prevent caching
+              const message = `data: ${data}\n\n`;
+              controller.enqueue(encoder.encode(message));
+              
+              // Force flush by sending a comment (helps with some proxies)
+              if (Math.random() < 0.1) { // 10% chance to add padding
+                controller.enqueue(encoder.encode(`: ${Date.now()}\n\n`));
+              }
             }
           }
           // Send completion signal
@@ -80,9 +91,12 @@ export async function POST(request: NextRequest) {
 
     return new Response(stream, {
       headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Cache-Control': 'no-cache',
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache, no-transform',
         'Connection': 'keep-alive',
+        'X-Accel-Buffering': 'no',
+        'X-Content-Type-Options': 'nosniff',
+        'Transfer-Encoding': 'chunked',
       },
     });
 
