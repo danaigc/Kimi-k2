@@ -3,47 +3,40 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Send, Bot, User, Loader2, MessageSquare, Zap } from "lucide-react";
+import { Send, Bot, User, Loader2, Paperclip, Mic } from "lucide-react";
 import { toast } from "sonner";
-
-interface Message {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: Date;
-}
+import { useChatContext } from "@/contexts/chat-context";
+import { Message, ChatStorage } from "@/lib/chat-storage";
 
 export function ChatInterface() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: "👋 Hi! I'm Kimi K2, your AI assistant. I can help you with coding, math problems, creative writing, and much more. What would you like to explore today?",
-      timestamp: new Date()
-    }
-  ]);
+  const { currentSession, addMessage, updateCurrentSession, createNewSession } = useChatContext();
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [shouldAutoScroll, setShouldAutoScroll] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
+  // Create a new session if none exists
+  useEffect(() => {
+    if (!currentSession) {
+      createNewSession();
+    }
+  }, [currentSession, createNewSession]);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
-    // Only auto-scroll if shouldAutoScroll is true (i.e., after user interaction)
     if (shouldAutoScroll) {
       scrollToBottom();
       setShouldAutoScroll(false);
     }
-  }, [messages, shouldAutoScroll]);
+  }, [currentSession?.messages, shouldAutoScroll]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || !currentSession) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -52,12 +45,11 @@ export function ChatInterface() {
       timestamp: new Date()
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    addMessage(userMessage);
     setInput("");
     setIsLoading(true);
     setShouldAutoScroll(true);
 
-    // Create assistant message placeholder for streaming
     const assistantMessageId = (Date.now() + 1).toString();
     const assistantMessage: Message = {
       id: assistantMessageId,
@@ -66,7 +58,17 @@ export function ChatInterface() {
       timestamp: new Date()
     };
 
-    setMessages(prev => [...prev, assistantMessage]);
+    // We need to get the updated session after adding messages
+    const sessionAfterUserMessage = ChatStorage.getSession(currentSession.id);
+    if (!sessionAfterUserMessage) return;
+
+    // Add the assistant message
+    const sessionWithAssistantMessage = {
+      ...sessionAfterUserMessage,
+      messages: [...sessionAfterUserMessage.messages, assistantMessage],
+      updatedAt: new Date()
+    };
+    updateCurrentSession(sessionWithAssistantMessage);
 
     try {
       const response = await fetch('/api/chat', {
@@ -75,7 +77,7 @@ export function ChatInterface() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages: [...messages, userMessage].map(msg => ({
+          messages: sessionAfterUserMessage.messages.map(msg => ({
             role: msg.role,
             content: msg.content
           }))
@@ -87,9 +89,9 @@ export function ChatInterface() {
         throw new Error(data.error || 'Failed to get response');
       }
 
-      // Handle streaming response
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
+      let accumulatedContent = '';
 
       if (reader) {
         while (true) {
@@ -111,14 +113,23 @@ export function ChatInterface() {
               try {
                 const parsed = JSON.parse(data);
                 if (parsed.content) {
-                  setMessages(prev => 
-                    prev.map(msg => 
-                      msg.id === assistantMessageId 
-                        ? { ...msg, content: msg.content + parsed.content }
-                        : msg
-                    )
-                  );
-                  setShouldAutoScroll(true);
+                  accumulatedContent += parsed.content;
+                  
+                  // Get the latest session state and update it
+                  const latestSession = ChatStorage.getSession(currentSession.id);
+                  if (latestSession) {
+                    const updatedSession = {
+                      ...latestSession,
+                      messages: latestSession.messages.map(msg => 
+                        msg.id === assistantMessageId 
+                          ? { ...msg, content: accumulatedContent }
+                          : msg
+                      ),
+                      updatedAt: new Date()
+                    };
+                    updateCurrentSession(updatedSession);
+                    setShouldAutoScroll(true);
+                  }
                 }
               } catch (parseError) {
                 console.warn('Failed to parse streaming data:', parseError);
@@ -133,7 +144,15 @@ export function ChatInterface() {
       console.error('Chat error:', error);
       
       // Remove the empty assistant message on error
-      setMessages(prev => prev.filter(msg => msg.id !== assistantMessageId));
+      const latestSession = ChatStorage.getSession(currentSession.id);
+      if (latestSession) {
+        const updatedSession = {
+          ...latestSession,
+          messages: latestSession.messages.filter(msg => msg.id !== assistantMessageId),
+          updatedAt: new Date()
+        };
+        updateCurrentSession(updatedSession);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -146,34 +165,51 @@ export function ChatInterface() {
     }
   };
 
+  const messages = currentSession?.messages || [];
+
   return (
-    <Card className="w-full max-w-4xl mx-auto h-[800px] flex flex-col bg-background/95 backdrop-blur border-0 shadow-2xl">
-      <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-primary/10 rounded-t-lg py-4">
-        <CardTitle className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-            <Bot className="w-5 h-5 text-primary" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span>Kimi K2 AI</span>
-              <div className="flex items-center gap-1 px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-xs">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                Online
+    <div className="flex flex-col h-full bg-background">
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto">
+        {messages.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center max-w-2xl px-4">
+              <div className="mb-8">
+                <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">KIMI</h1>
+                <p className="text-muted-foreground text-lg">Ask me anything...</p>
+              </div>
+              
+              {/* Quick Actions */}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-8">
+                {[
+                  "Write a bubble sort function",
+                  "Explain quantum computing principles",
+                  "Help me write a work summary",
+                  "What are JavaScript closures?",
+                  "Recommend resources for learning programming",
+                  "How to improve code quality?"
+                ].map((prompt, index) => (
+                  <motion.button
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.1 }}
+                    className="p-3 text-sm bg-muted hover:bg-muted/80 rounded-lg transition-colors text-left"
+                    onClick={() => {
+                      setInput(prompt);
+                      inputRef.current?.focus();
+                    }}
+                  >
+                    {prompt}
+                  </motion.button>
+                ))}
               </div>
             </div>
-            <p className="text-sm text-muted-foreground font-normal">
-              Powered by Moonshot AI • Open-source intelligence
-            </p>
           </div>
-        </CardTitle>
-      </CardHeader>
-
-      <CardContent className="flex-1 overflow-hidden p-0">
-        <div className="h-full flex flex-col">
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        ) : (
+          <div className="p-4 space-y-4 max-w-4xl mx-auto">
             <AnimatePresence>
-              {messages.map((message) => (
+              {messages.filter(message => !(message.role === 'assistant' && message.content === '')).map((message) => (
                 <motion.div
                   key={message.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -197,18 +233,12 @@ export function ChatInterface() {
                         : 'bg-muted'
                     }`}
                   >
-                    <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                    <span className="text-sm leading-relaxed whitespace-pre-wrap">
                       {message.content}
                       {message.role === 'assistant' && isLoading && message.content && (
                         <span className="inline-block w-2 h-4 bg-primary/60 ml-1 animate-pulse" />
                       )}
-                    </p>
-                    <div className="text-xs opacity-70 mt-2">
-                      {message.timestamp.toLocaleTimeString([], { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                      })}
-                    </div>
+                    </span>
                   </div>
 
                   {message.role === 'user' && (
@@ -220,7 +250,7 @@ export function ChatInterface() {
               ))}
             </AnimatePresence>
 
-            {isLoading && (
+            {isLoading && messages[messages.length - 1]?.content === '' && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -233,7 +263,7 @@ export function ChatInterface() {
                   <div className="flex items-center gap-2">
                     <Loader2 className="w-4 h-4 animate-spin" />
                     <span className="text-sm text-muted-foreground">
-                      Kimi K2 is thinking...
+                      Kimi is thinking...
                     </span>
                   </div>
                 </div>
@@ -242,26 +272,46 @@ export function ChatInterface() {
 
             <div ref={messagesEndRef} />
           </div>
+        )}
+      </div>
 
-          {/* Input */}
-          <div className="border-t p-4 bg-muted/30">
-            <form onSubmit={handleSubmit} className="flex items-center gap-3">
-              <div className="flex-1 relative">
-                <textarea
-                  ref={inputRef}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Ask Kimi K2 anything... (Press Enter to send, Shift+Enter for new line)"
-                  className="w-full min-h-[60px] max-h-32 px-4 py-3 bg-background border border-border rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                  disabled={isLoading}
-                />
-              </div>
+      {/* Input Area */}
+      <div className="border-t bg-background/95 backdrop-blur">
+        <div className="max-w-4xl mx-auto p-4">
+          <form onSubmit={handleSubmit} className="relative">
+            <textarea
+              ref={inputRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Ask me anything..."
+              className="w-full min-h-[120px] max-h-[200px] px-4 py-3 pr-24 bg-muted/50 border border-border rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-base"
+              disabled={isLoading}
+            />
+            <div className="absolute bottom-3 right-3 flex items-center gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                disabled={isLoading}
+              >
+                <Paperclip className="w-4 h-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                disabled={isLoading}
+              >
+                <Mic className="w-4 h-4" />
+              </Button>
               <Button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                size="lg"
-                className="px-6 rounded-xl"
+                size="sm"
+                className="rounded-lg"
               >
                 {isLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -269,24 +319,32 @@ export function ChatInterface() {
                   <Send className="w-4 h-4" />
                 )}
               </Button>
-            </form>
-            
-            <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1">
-                  <Zap className="w-3 h-3" />
-                  <span>Model: moonshotai/kimi-k2</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <MessageSquare className="w-3 h-3" />
-                  <span>{messages.length} messages</span>
-                </div>
-              </div>
-              <span>Powered by OpenRouter</span>
+            </div>
+          </form>
+          
+          <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-1">
+                <span className="text-orange-500">🔥</span> Kimi K2 released as open source, Model as Agent
+              </span>
+              <span>PPT export now available!</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <button className="hover:text-foreground transition-colors">
+                Play a quiz game
+              </button>
+              <span>•</span>
+              <button className="hover:text-foreground transition-colors">
+                Voice chat coming soon
+              </button>
+              <span>•</span>
+              <button className="hover:text-foreground transition-colors">
+                Can AI predict lottery numbers?
+              </button>
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
