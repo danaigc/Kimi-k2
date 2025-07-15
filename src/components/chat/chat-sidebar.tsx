@@ -81,7 +81,7 @@ export function ChatSidebar({ className }: ChatSidebarProps) {
   return (
     <div className={cn("w-80 bg-muted/20 border-r border-border flex flex-col h-full", className)}>
       {/* Header */}
-      <div className="p-4">
+      <div className="p-4 flex-shrink-0 border-b border-border/50">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Chat History</h2>
           <Button variant="ghost" size="sm">
@@ -114,8 +114,9 @@ export function ChatSidebar({ className }: ChatSidebarProps) {
       </div>
 
       {/* Chat List */}
-      <ScrollArea className="flex-1">
-        <div className="p-2">
+      <div className="flex-1 min-h-0 overflow-hidden">
+        <ScrollArea className="h-full w-full">
+          <div className="p-2 pb-4">
           {Object.entries(groupedSessions).map(([groupName, sessions]) => (
             <div key={groupName} className="mb-6">
               <div className="flex items-center gap-2 px-2 py-1 mb-2">
@@ -192,11 +193,12 @@ export function ChatSidebar({ className }: ChatSidebarProps) {
               )}
             </div>
           )}
-        </div>
-      </ScrollArea>
+          </div>
+        </ScrollArea>
+      </div>
 
       {/* Footer */}
-      <div className="p-4 border-t border-border bg-muted/10">
+      <div className="p-4 border-t border-border bg-muted/10 flex-shrink-0">
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
             <History className="w-3 h-3" />

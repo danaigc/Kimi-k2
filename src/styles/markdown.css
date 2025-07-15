@@ -1,0 +1,104 @@
+/* Markdown styles for chat messages */
+.chat-markdown {
+  @apply text-sm;
+}
+
+/* Override prose styles for chat */
+.chat-markdown.prose {
+  @apply max-w-none;
+}
+
+.chat-markdown.prose p {
+  @apply my-2 leading-relaxed;
+}
+
+.chat-markdown.prose h1,
+.chat-markdown.prose h2,
+.chat-markdown.prose h3,
+.chat-markdown.prose h4,
+.chat-markdown.prose h5,
+.chat-markdown.prose h6 {
+  @apply mt-4 mb-2;
+}
+
+.chat-markdown.prose h1 {
+  @apply text-xl font-bold;
+}
+
+.chat-markdown.prose h2 {
+  @apply text-lg font-semibold;
+}
+
+.chat-markdown.prose h3 {
+  @apply text-base font-medium;
+}
+
+.chat-markdown.prose ul,
+.chat-markdown.prose ol {
+  @apply my-2 ml-4;
+}
+
+.chat-markdown.prose li {
+  @apply my-1;
+}
+
+.chat-markdown.prose pre {
+  @apply my-3 p-3 rounded-md bg-muted/50 overflow-x-auto;
+}
+
+.chat-markdown.prose code {
+  @apply text-xs;
+}
+
+.chat-markdown.prose :not(pre) > code {
+  @apply px-1 py-0.5 rounded bg-muted/50 text-xs;
+}
+
+.chat-markdown.prose blockquote {
+  @apply my-3 pl-3 border-l-2 border-muted-foreground/30;
+}
+
+.chat-markdown.prose table {
+  @apply my-3 text-sm;
+}
+
+.chat-markdown.prose img {
+  @apply my-3 rounded-md;
+}
+
+.chat-markdown.prose hr {
+  @apply my-4;
+}
+
+/* Dark mode adjustments */
+.dark .chat-markdown.prose pre {
+  @apply bg-neutral-800/50;
+}
+
+.dark .chat-markdown.prose :not(pre) > code {
+  @apply bg-neutral-800/50;
+}
+
+/* Syntax highlighting adjustments for chat */
+.chat-markdown .hljs {
+  @apply bg-transparent p-0;
+}
+
+/* User message styles */
+.bg-primary .chat-markdown.prose,
+.bg-primary .chat-markdown.prose h1,
+.bg-primary .chat-markdown.prose h2,
+.bg-primary .chat-markdown.prose h3,
+.bg-primary .chat-markdown.prose h4,
+.bg-primary .chat-markdown.prose h5,
+.bg-primary .chat-markdown.prose h6 {
+  @apply text-primary-foreground;
+}
+
+.bg-primary .chat-markdown.prose code {
+  @apply bg-primary-foreground/20;
+}
+
+.bg-primary .chat-markdown.prose a {
+  @apply text-primary-foreground underline;
+}

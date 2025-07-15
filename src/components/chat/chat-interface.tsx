@@ -3,18 +3,21 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Send, Bot, User, Loader2, Paperclip, Mic } from "lucide-react";
+import { Send, Bot, User, Loader2, Paperclip, Mic, ArrowDown } from "lucide-react";
 import { toast } from "sonner";
 import { useChatContext } from "@/contexts/chat-context";
 import { Message, ChatStorage } from "@/lib/chat-storage";
+import { MarkdownRenderer } from "@/components/chat/markdown-renderer";
 
 export function ChatInterface() {
   const { currentSession, addMessage, updateCurrentSession, createNewSession } = useChatContext();
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [shouldAutoScroll, setShouldAutoScroll] = useState(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Create a new session if none exists
   useEffect(() => {
@@ -34,6 +37,23 @@ export function ChatInterface() {
     }
   }, [currentSession?.messages, shouldAutoScroll]);
 
+  // Handle scroll detection for showing/hiding scroll button
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+      setShowScrollButton(!isNearBottom);
+    }
+  };
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading || !currentSession) return;
@@ -48,7 +68,7 @@ export function ChatInterface() {
     addMessage(userMessage);
     setInput("");
     setIsLoading(true);
-    setShouldAutoScroll(true);
+    // Remove auto-scroll on submit
 
     const assistantMessageId = (Date.now() + 1).toString();
     const assistantMessage: Message = {
@@ -106,7 +126,7 @@ export function ChatInterface() {
               const data = line.slice(6).trim();
               if (data === '[DONE]') {
                 setIsLoading(false);
-                setShouldAutoScroll(true);
+                // Don't auto-scroll when done
                 return;
               }
 
@@ -128,7 +148,7 @@ export function ChatInterface() {
                       updatedAt: new Date()
                     };
                     updateCurrentSession(updatedSession);
-                    setShouldAutoScroll(true);
+                    // Don't auto-scroll during streaming
                   }
                 }
               } catch (parseError) {
@@ -168,9 +188,9 @@ export function ChatInterface() {
   const messages = currentSession?.messages || [];
 
   return (
-    <div className="flex flex-col h-full bg-background">
+    <div className="flex flex-col h-full bg-background relative">
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center max-w-2xl px-4">
@@ -233,12 +253,21 @@ export function ChatInterface() {
                         : 'bg-muted'
                     }`}
                   >
-                    <span className="text-sm leading-relaxed whitespace-pre-wrap">
-                      {message.content}
-                      {message.role === 'assistant' && isLoading && message.content && (
-                        <span className="inline-block w-2 h-4 bg-primary/60 ml-1 animate-pulse" />
-                      )}
-                    </span>
+                    {message.role === 'assistant' ? (
+                      <div className="text-sm">
+                        <MarkdownRenderer 
+                          content={message.content} 
+                          className="prose-sm prose-headings:mt-3 prose-headings:mb-2 prose-p:my-2 prose-li:my-1 prose-pre:my-2"
+                        />
+                        {isLoading && message.content && (
+                          <span className="inline-block w-2 h-4 bg-primary/60 ml-1 animate-pulse" />
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-sm leading-relaxed whitespace-pre-wrap">
+                        {message.content}
+                      </span>
+                    )}
                   </div>
 
                   {message.role === 'user' && (
@@ -274,6 +303,27 @@ export function ChatInterface() {
           </div>
         )}
       </div>
+
+      {/* Scroll to Bottom Button */}
+      <AnimatePresence>
+        {showScrollButton && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="absolute bottom-32 right-8"
+          >
+            <Button
+              onClick={scrollToBottom}
+              size="icon"
+              className="rounded-full shadow-lg"
+              variant="secondary"
+            >
+              <ArrowDown className="h-4 w-4" />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Input Area */}
       <div className="border-t bg-background/95 backdrop-blur">
